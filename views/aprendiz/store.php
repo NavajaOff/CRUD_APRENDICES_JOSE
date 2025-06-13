@@ -11,31 +11,12 @@ try {
 
     // Procesar la solicitud
     $resultado = $controller->store($_POST);
-
-    // Preparar la respuesta para SweetAlert2
-    $response = [
-        'icon' => $resultado['status'],
-        'title' => $resultado['status'] === 'success' ? '¡Éxito!' : 'Error',
-        'text' => $resultado['message']
-    ];
-
-    // Guardar la respuesta en sesión para mostrarla después de la redirección
-    session_start();
-    $_SESSION['alert'] = $response;
-
-    // Redireccionar según el resultado
-    header('Location: index.php');
+    
+    // Redireccionar con parámetros GET
+    header('Location: index.php?status=' . $resultado['status'] . '&message=' . urlencode($resultado['message']));
     exit;
 
 } catch (Exception $e) {
-    // En caso de error inesperado
-    session_start();
-    $_SESSION['alert'] = [
-        'icon' => 'error',
-        'title' => 'Error',
-        'text' => $e->getMessage()
-    ];
-    
-    header('Location: crear.php');
+    header('Location: crear.php?status=error&message=' . urlencode($e->getMessage()));
     exit;
 }

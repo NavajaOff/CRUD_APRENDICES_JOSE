@@ -12,20 +12,6 @@
     <div class="container">
         <div class="container-fluid">
             <div class="row">
-                <div class="col">
-                    <h1>Editar Aprendiz</h1>
-                    <form action="store.php" method="post">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" value="">
-                        </div>
-                        <div class="mb-3">
-                            <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
-                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Crear</button>
-                    </form>
-                </div>
             </div>
         </div>
     </div>
@@ -40,6 +26,10 @@
 <?php 
 require_once '../../controllers/AprendizController.php';
 require_once '../head/head.php';
+
+$controller = new AprendizController();
+$datosFormulario = $controller->getDatosFormulario();
+$datos = $datosFormulario['data'] ?? [];
 ?>
 
 <div class="card shadow">
@@ -53,6 +43,9 @@ require_once '../head/head.php';
                     <label class="form-label">Tipo de Documento</label>
                     <select name="tipo_documento_id" class="form-select" required>
                         <option value="">Seleccione...</option>
+                        <?php foreach ($datos['tipos_documento'] ?? [] as $tipo): ?>
+                            <option value="<?= $tipo['id'] ?>"><?= $tipo['nombre'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                     <div class="invalid-feedback">Seleccione el tipo de documento</div>
                 </div>
@@ -79,29 +72,37 @@ require_once '../head/head.php';
                     <label class="form-label">Segundo Apellido</label>
                     <input type="text" name="segundo_apellido" class="form-control">
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-6 mb-3">
                     <label class="form-label">Sexo</label>
-                    <select name="sexo" class="form-select" required>
+                    <select name="sexo_id" class="form-select" required>
                         <option value="">Seleccione...</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
-                        <option value="O">Otro</option>
+                        <?php foreach ($datos['sexos'] ?? [] as $sexo): ?>
+                            <option value="<?= $sexo['id'] ?>"><?= $sexo['nombre'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                     <div class="invalid-feedback">Seleccione el sexo</div>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-6 mb-3">
                     <label class="form-label">Grupo Sanguíneo</label>
                     <select name="grupo_sanguineo_id" class="form-select" required>
                         <option value="">Seleccione...</option>
+                        <?php foreach ($datos['grupos_sanguineos'] ?? [] as $grupo): ?>
+                            <option value="<?= $grupo['id'] ?>"><?= $grupo['tipo'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                     <div class="invalid-feedback">Seleccione el grupo sanguíneo</div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Ficha</label>
-                    <select name="ficha_id" class="form-select" required>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Programa de Formación</label>
+                    <select name="programa_formacion_id" class="form-select" required>
                         <option value="">Seleccione...</option>
+                        <?php foreach ($datos['programas'] ?? [] as $programa): ?>
+                            <option value="<?= $programa['id'] ?>">
+                                <?= $programa['nombre'] ?> - Ficha: <?= $programa['id'] ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
-                    <div class="invalid-feedback">Seleccione la ficha</div>
+                    <div class="invalid-feedback">Seleccione el programa de formación</div>
                 </div>
             </div>
 
@@ -116,22 +117,5 @@ require_once '../head/head.php';
         </form>
     </div>
 </div>
-
-<script>
-(function () {
-    'use strict'
-    var forms = document.querySelectorAll('.needs-validation')
-    Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-                form.classList.add('was-validated')
-            }, false)
-        })
-})()
-</script>
 
 <?php require_once '../head/footer.php'; ?>

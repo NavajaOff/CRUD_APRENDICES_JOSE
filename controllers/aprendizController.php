@@ -1,5 +1,4 @@
 <?php
-<?php
 require_once __DIR__ . '/../models/AprendizModel.php';
 
 class AprendizController {
@@ -70,7 +69,7 @@ class AprendizController {
 
     public function update($id, $data) {
         try {
-            // Verificar si existe el aprendiz
+
             if (!$this->model->getById($id)) {
                 return [
                     'status' => 'error',
@@ -78,7 +77,6 @@ class AprendizController {
                 ];
             }
 
-            // Verificar duplicado de documento excluyendo el ID actual
             if ($this->model->existeNumeroDocumento($data['numero_documento'], $id)) {
                 return [
                     'status' => 'error',
@@ -101,7 +99,6 @@ class AprendizController {
 
     public function destroy($id) {
         try {
-            // Verificar si existe el aprendiz
             if (!$this->model->getById($id)) {
                 return [
                     'status' => 'error',
@@ -118,6 +115,21 @@ class AprendizController {
             return [
                 'status' => 'error',
                 'message' => 'Error al eliminar el aprendiz: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function getDatosFormulario() {
+        try {
+            $datos = $this->model->getDatosFormulario();
+            return [
+                'status' => 'success',
+                'data' => $datos
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Error al obtener datos del formulario: ' . $e->getMessage()
             ];
         }
     }

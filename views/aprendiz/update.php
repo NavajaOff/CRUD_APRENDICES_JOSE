@@ -21,31 +21,11 @@ try {
 
     // Procesar la actualización
     $resultado = $controller->update($id, $data);
-
-    // Preparar la respuesta para SweetAlert2
-    $response = [
-        'icon' => $resultado['status'],
-        'title' => $resultado['status'] === 'success' ? '¡Éxito!' : 'Error',
-        'text' => $resultado['message']
-    ];
-
-    // Guardar la respuesta en sesión para mostrarla después de la redirección
-    session_start();
-    $_SESSION['alert'] = $response;
-
-    // Redireccionar según el resultado
-    header('Location: index.php');
+    
+    header('Location: index.php?status=' . $resultado['status'] . '&message=' . urlencode($resultado['message']));
     exit;
 
 } catch (Exception $e) {
-    // En caso de error inesperado
-    session_start();
-    $_SESSION['alert'] = [
-        'icon' => 'error',
-        'title' => 'Error',
-        'text' => $e->getMessage()
-    ];
-    
-    header("Location: editar.php?id={$_POST['id']}");
+    header('Location: editar.php?id=' . $_POST['id'] . '&status=error&message=' . urlencode($e->getMessage()));
     exit;
 }
