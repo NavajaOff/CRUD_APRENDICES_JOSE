@@ -1,18 +1,27 @@
 <?php
 
-$server = "localhost";
-$database = "prueba_db";
-$usuario = "root";
-$contrasenia = "";
+class Database {
+    private $host = "localhost";
+    private $dbname = "crud_aprendices";
+    private $user = "root";
+    private $password = "";
 
-$conexion = mysqli_connect($server, $usuario, $contrasenia, $database);
-
-try {
-    if (!$conexion) {
-        throw new Exception("Error de conexión: " . mysqli_connect_error());
-    } else {
-        // echo "Conexión exitosa a la base de datos.";
+    public function connect() {
+        try {
+            $conexion = new PDO(
+                "mysql:host=" . $this->host . ";dbname=" . $this->dbname,
+                $this->user,
+                $this->password,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                ]
+            );
+            return $conexion;
+            
+        } catch (PDOException $e) {
+            error_log("Error de conexión: " . $e->getMessage());
+            throw new Exception("No se pudo conectar a la base de datos");
+        }
     }
-} catch (Exception $e) {
-    echo $e->getMessage();
 }
