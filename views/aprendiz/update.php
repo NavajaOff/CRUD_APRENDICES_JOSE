@@ -1,19 +1,31 @@
 <?php
+require_once '../../controllers/AprendizController.php';
 
-var_dump($_POST);
+try {
+    $controller = new AprendizController();
+    
+    // Validar que sea una petición POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Método no permitido');
+    }
 
-include 'conexion.php';
-$id = $_POST['id'];
-$nombre = $_POST['nombre'];
-$fecha_nacimiento = $_POST['fecha_nacimiento'];
+    // Obtener el ID del aprendiz
+    $id = $_POST['id'] ?? null;
+    if (!$id) {
+        throw new Exception('ID no proporcionado');
+    }
 
-$sql = "UPDATE aprendices SET nombre='$nombre', fecha_nacimiento='$fecha_nacimiento' WHERE id=$id";
-$resultado = mysqli_query($conexion, $sql);
-if ($resultado) {
-    echo "<script>alert('Registro actualizado correctamente');</script>";
-    echo "<script>window.location.href='index.php';</script>";
-} else {
-    echo "<script>alert('Error al actualizar el registro');</script>";
-    echo "<script>window.location.href='index.php';</script>";
+    // Eliminar el ID del array de datos
+    $data = $_POST;
+    unset($data['id']);
+
+    // Procesar la actualización
+    $resultado = $controller->update($id, $data);
+    
+    header('Location: index.php?status=' . $resultado['status'] . '&message=' . urlencode($resultado['message']));
+    exit;
+
+} catch (Exception $e) {
+    header('Location: editar.php?id=' . $_POST['id'] . '&status=error&message=' . urlencode($e->getMessage()));
+    exit;
 }
-mysqli_close($conexion);

@@ -1,18 +1,22 @@
 <?php
+require_once '../../controllers/AprendizController.php';
 
-include 'conexion.php';
+try {
+    $controller = new AprendizController();
+    
+    // Validar que sea una petición POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Método no permitido');
+    }
 
-$nombre = $_POST['nombre'];
-$fecha_nacimiento = $_POST['fecha_nacimiento'];
+    // Procesar la solicitud
+    $resultado = $controller->store($_POST);
+    
+    // Redireccionar con parámetros GET
+    header('Location: index.php?status=' . $resultado['status'] . '&message=' . urlencode($resultado['message']));
+    exit;
 
-$sql = "INSERT INTO aprendices (nombre, fecha_nacimiento) VALUES ('$nombre', '$fecha_nacimiento')";
-$resultado = mysqli_query($conexion, $sql);
-
-if ($resultado) {
-    echo "<script>alert('Registro creado correctamente');</script>";
-    echo "<script>window.location.href='index.php';</script>";
-} else {
-    echo "<script>alert('Error al crear el registro');</script>";
-    echo "<script>window.location.href='index.php';</script>";
+} catch (Exception $e) {
+    header('Location: crear.php?status=error&message=' . urlencode($e->getMessage()));
+    exit;
 }
-mysqli_close($conexion);
