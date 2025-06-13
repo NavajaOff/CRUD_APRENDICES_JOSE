@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SENA || Home</title>
+    <title>NVJ || Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
 </head>
 
@@ -18,50 +18,70 @@
                         <a href="crear.php" class="btn btn-sm btn-primary">Crear Aprendiz</a>
                     </div>
 
-                    <table class="table table-sm table-hover table-responsive">
-                        <thead>
-                            <tr class="text-center">
-                                <th scope="col">No.</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Edad</th>
-                                <th colspan="3" scope="col">Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            include 'conexion.php';
-                            $sql = "SELECT * FROM aprendices";
-                            $resultado = mysqli_query($conexion, $sql);
-                            $contador = 1;
+                    <div class="card shadow">
+                        <div class="card-header bg-success text-white">
+                            <h4 class="mb-0"><i class="fas fa-users"></i> Gestión de Aprendices</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <a href="crear.php" class="btn btn-success">
+                                    <i class="fas fa-plus-circle"></i> Nuevo Aprendiz
+                                </a>
+                            </div>
 
-                            while ($row = mysqli_fetch_array($resultado)) {
-                                $id = $row['id'];
-                                $nombre = $row['nombre'];
-                                $fecha_nacimiento = $row['fecha_nacimiento'];
-                                $obj = new DateTime($fecha_nacimiento);
-                                $hoy = new DateTime();
-                                $edad = $hoy->diff($obj)->y; // Calcular la edad
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Documento</th>
+                                            <th>Nombres</th>
+                                            <th>Apellidos</th>
+                                            <th>Ficha</th>
+                                            <th>Programa</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        include 'conexion.php';
+                                        $sql = "SELECT * FROM aprendices";
+                                        $resultado = mysqli_query($conexion, $sql);
+                                        $contador = 1;
 
-                                echo "<tr class='text-center'>";
-                                echo "<th scope='row'>$contador</th>";
-                                echo "<td>$nombre</td>";
-                                echo "<td>$edad años</td>";
-                                echo "<td>";
-                                echo "<a href='ver.php?id=$id&nombre=$nombre' class='btn btn-info btn-sm'>Ver</a>";
-                                echo "</td>";
-                                echo "<td>";
-                                echo "<a href='editar.php?id=$id' class='btn btn-warning btn-sm'>Editar</a>";
-                                echo "</td>";
-                                echo "<td>";
-                                echo "<a href='delete.php?id=$id' class='btn btn-danger btn-sm'>Eliminar</a>";
-                                echo "</td>";
-                                echo "</tr>";
-                                $contador++;
-                            }
-                            mysqli_close($conexion);
-                            ?>
-                        </tbody>
-                    </table>
+                                        while ($row = mysqli_fetch_array($resultado)) {
+                                            $id = $row['id'];
+                                            $nombre = $row['nombre'];
+                                            $fecha_nacimiento = $row['fecha_nacimiento'];
+                                            $obj = new DateTime($fecha_nacimiento);
+                                            $hoy = new DateTime();
+                                            $edad = $hoy->diff($obj)->y; // Calcular la edad
+
+                                            echo "<tr class='text-center'>";
+                                            echo "<th scope='row'>$contador</th>";
+                                            echo "<td>$nombre</td>";
+                                            echo "<td>$edad años</td>";
+                                            echo "<td>";
+                                            echo "<a href='ver.php?id=$id&nombre=$nombre' class='btn btn-info btn-sm'>Ver</a>";
+                                            echo "</td>";
+                                            echo "<td>";
+                                            echo "<a href='editar.php?id=$id' class='btn btn-warning btn-sm'>Editar</a>";
+                                            echo "</td>";
+                                            echo "<td>";
+                                            echo "<a href='delete.php?id=$id' class='btn btn-danger btn-sm'>Eliminar</a>";
+                                            echo "</td>";
+                                            echo "</tr>";
+                                            $contador++;
+                                        }
+                                        mysqli_close($conexion);
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
