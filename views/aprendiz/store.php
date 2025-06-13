@@ -1,18 +1,41 @@
 <?php
+require_once '../../controllers/AprendizController.php';
 
-include 'conexion.php';
+try {
+    $controller = new AprendizController();
+    
+    // Validar que sea una petición POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Método no permitido');
+    }
 
-$nombre = $_POST['nombre'];
-$fecha_nacimiento = $_POST['fecha_nacimiento'];
+    // Procesar la solicitud
+    $resultado = $controller->store($_POST);
 
-$sql = "INSERT INTO aprendices (nombre, fecha_nacimiento) VALUES ('$nombre', '$fecha_nacimiento')";
-$resultado = mysqli_query($conexion, $sql);
+    // Preparar la respuesta para SweetAlert2
+    $response = [
+        'icon' => $resultado['status'],
+        'title' => $resultado['status'] === 'success' ? '¡Éxito!' : 'Error',
+        'text' => $resultado['message']
+    ];
 
-if ($resultado) {
-    echo "<script>alert('Registro creado correctamente');</script>";
-    echo "<script>window.location.href='index.php';</script>";
-} else {
-    echo "<script>alert('Error al crear el registro');</script>";
-    echo "<script>window.location.href='index.php';</script>";
+    // Guardar la respuesta en sesión para mostrarla después de la redirección
+    session_start();
+    $_SESSION['alert'] = $response;
+
+    // Redireccionar según el resultado
+    header('Location: index.php');
+    exit;
+
+} catch (Exception $e) {
+    // En caso de error inesperado
+    session_start();
+    $_SESSION['alert'] = [
+        'icon' => 'error',
+        'title' => 'Error',
+        'text' => $e->getMessage()
+    ];
+    
+    header('Location: crear.php');
+    exit;
 }
-mysqli_close($conexion);

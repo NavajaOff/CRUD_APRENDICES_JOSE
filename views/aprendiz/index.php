@@ -92,3 +92,27 @@
 </body>
 
 </html>
+
+<?php
+require_once '../../controllers/AprendizController.php';
+require_once '../head/head.php';
+
+// Mostrar alerta si existe
+session_start();
+if (isset($_SESSION['alert'])) {
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: '{$_SESSION['alert']['icon']}',
+                title: '{$_SESSION['alert']['title']}',
+                text: '{$_SESSION['alert']['text']}',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        });
+    </script>";
+    unset($_SESSION['alert']);
+}
+
+// Resto del código existente...
+?>

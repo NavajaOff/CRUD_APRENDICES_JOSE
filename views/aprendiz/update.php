@@ -1,19 +1,51 @@
 <?php
+require_once '../../controllers/AprendizController.php';
 
-var_dump($_POST);
+try {
+    $controller = new AprendizController();
+    
+    // Validar que sea una petición POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Método no permitido');
+    }
 
-include 'conexion.php';
-$id = $_POST['id'];
-$nombre = $_POST['nombre'];
-$fecha_nacimiento = $_POST['fecha_nacimiento'];
+    // Obtener el ID del aprendiz
+    $id = $_POST['id'] ?? null;
+    if (!$id) {
+        throw new Exception('ID no proporcionado');
+    }
 
-$sql = "UPDATE aprendices SET nombre='$nombre', fecha_nacimiento='$fecha_nacimiento' WHERE id=$id";
-$resultado = mysqli_query($conexion, $sql);
-if ($resultado) {
-    echo "<script>alert('Registro actualizado correctamente');</script>";
-    echo "<script>window.location.href='index.php';</script>";
-} else {
-    echo "<script>alert('Error al actualizar el registro');</script>";
-    echo "<script>window.location.href='index.php';</script>";
+    // Eliminar el ID del array de datos
+    $data = $_POST;
+    unset($data['id']);
+
+    // Procesar la actualización
+    $resultado = $controller->update($id, $data);
+
+    // Preparar la respuesta para SweetAlert2
+    $response = [
+        'icon' => $resultado['status'],
+        'title' => $resultado['status'] === 'success' ? '¡Éxito!' : 'Error',
+        'text' => $resultado['message']
+    ];
+
+    // Guardar la respuesta en sesión para mostrarla después de la redirección
+    session_start();
+    $_SESSION['alert'] = $response;
+
+    // Redireccionar según el resultado
+    header('Location: index.php');
+    exit;
+
+} catch (Exception $e) {
+    // En caso de error inesperado
+    session_start();
+    $_SESSION['alert'] = [
+        'icon' => 'error',
+        'title' => 'Error',
+        'text' => $e->getMessage()
+    ];
+    
+    header("Location: editar.php?id={$_POST['id']}");
+    exit;
 }
-mysqli_close($conexion);
